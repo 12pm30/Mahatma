@@ -5,7 +5,6 @@
 //  Created by Johan Cornelissen on 2018-02-02.
 //  Copyright © 2018 Johan Cornelissen. All rights reserved.
 //
-
 import UIKit
 
 @UIApplicationMain
@@ -13,10 +12,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        TWTRTwitter.sharedInstance().start(withConsumerKey:"CgRIGFNmHJqxmxAHe50jy9BKM", consumerSecret:"DE4rgpdiwDYjRacAryfS7TCWawF7UMo2ExtmaeEE8wzmiV1Knv")
+        
         return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return TWTRTwitter.sharedInstance().application(app, open: url, options: options)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
