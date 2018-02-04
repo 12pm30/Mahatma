@@ -2,6 +2,8 @@ import UIKit
 import TwitterKit
 import Foundation
 
+var screenNames = [String]()
+
 class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     
     // setup a 'container' for Tweets
@@ -17,54 +19,24 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     
     var isLoadingTweets = false
     
-    var tweetIDs = [String]();
-    
+    var tweetIDs = [String]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Get the current userID. This value should be managed by the developer but can be retrieved from the TWTRSessionStore.
-        if let userID = TWTRTwitter.sharedInstance().sessionStore.session()?.userID {
-            let client = TWTRAPIClient(userID: userID)
-            // make requests with client
-            let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-            let params = ["screen_name": "therock", "count": "20"]
-            var clientError : NSError?
-            
-            let request = client.urlRequest(withMethod: "GET", urlString: statusesShowEndpoint, parameters: params, error: &clientError)
-            
-            client.sendTwitterRequest(request) { (response, data, connectionError) -> Void in
-                if connectionError != nil {
-                    print("Error: \(connectionError)")
-                }
-                
-                do {
-                    let json = try JSONSerialization.jsonObject(with: data!, options: []) as? [[String:Any]]
-                    //print("json: \(json)")
-                    for item in json! {
-                        self.tweetIDs.append(String(format: "%@", item["id"] as! CVarArg))
-                    }
-                    
-                    self.tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-                    
-                    // Create a single prototype cell for height calculations.
-                    self.prototypeCell = TWTRTweetTableViewCell(style: .default, reuseIdentifier: self.tweetTableCellReuseIdentifier)
-                    
-                    // Register the identifier for TWTRTweetTableViewCell.
-                    self.tableView.register(TWTRTweetTableViewCell.self, forCellReuseIdentifier: self.tweetTableCellReuseIdentifier)
-                    
-                    // Setup table data
-                    self.loadTweets()
-                    
-                } catch let jsonError as NSError {
-                    print("json error: \(jsonError.localizedDescription)")
-                }
-            }
-            
-            
-            
-        }
+        // Create and add the view to the screen.
+        let progressHUD = ProgressHUD(text: "Retrieving Tweets")
+        progressHUD.tag = 100;
+        progressHUD.center = self.view.center;
+        self.view.addSubview(progressHUD)
         
+        // Create and add the view to the screen.
+        let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatma's yet.", text2: "Add new Mahatma's in preferences tab.")
+        welcomeInstructionsVar.tag = 110;
+        welcomeInstructionsVar.center = self.view.center;
+        self.view.addSubview(welcomeInstructionsVar)
         
+        NotificationCenter.default.addObserver(self, selector:#selector(refreshTweets(notification:)),name:NSNotification.Name(rawValue: "refreshTweets"), object: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -77,8 +49,78 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         
         // Make sure the navigation bar is not translucent when scrolling the table view.
         self.navigationController?.navigationBar.isTranslucent = false
+        
+        //refreshTweets()
     }
     
+    @objc func refreshTweets(notification: NSNotification) {
+        print("RefreshTweets!")
+        
+        //Remove welcome message
+        if let viewWithTag = self.view.viewWithTag(110) {
+            viewWithTag.removeFromSuperview()
+        }
+        
+        // Get the current userID. This value should be managed by the developer but can be retrieved from the TWTRSessionStore.
+        var counter = 0
+        tweetIDs.removeAll()
+        self.tweets.removeAll()
+        for i in 0...screenNames.count-1 {
+            if let userID = TWTRTwitter.sharedInstance().sessionStore.session()?.userID {
+                let client = TWTRAPIClient(userID: userID)
+                // make requests with client
+                let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+                let params = ["screen_name": screenNames[i], "count": "20"]
+                var clientError : NSError?
+                
+                let request = client.urlRequest(withMethod: "GET", urlString: statusesShowEndpoint, parameters: params, error: &clientError)
+                
+                client.sendTwitterRequest(request) { (response, data, connectionError) -> Void in
+                    if connectionError != nil {
+                        print("Error: \(connectionError)")
+                    }
+                    
+                    do {
+                        if (data != nil) {
+                            //Send message to update table with valid user.
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTableValid"), object: nil)
+                            
+                            let json = try JSONSerialization.jsonObject(with: data!, options: []) as? [[String:Any]]
+                            //print("json: \(json)")
+                            for item in json! {
+                                self.tweetIDs.append(String(format: "%@", item["id"] as! CVarArg))
+                            }
+                            counter = counter + 1
+                            if (counter > screenNames.count-1) {
+                                self.tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+                                
+                                // Create a single prototype cell for height calculations.
+                                self.prototypeCell = TWTRTweetTableViewCell(style: .default, reuseIdentifier: self.tweetTableCellReuseIdentifier)
+                                
+                                // Register the identifier for TWTRTweetTableViewCell.
+                                self.tableView.register(TWTRTweetTableViewCell.self, forCellReuseIdentifier: self.tweetTableCellReuseIdentifier)
+                                
+                                // Setup table data
+                                self.loadTweets()
+                                
+                            }
+                        }
+                        else {
+                            screenNames.popLast()
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTable"), object: nil)
+                        }
+                        
+                    } catch let jsonError as NSError {
+                        print("json error: \(jsonError.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+    }
     
     func loadTweets() {
         // Do not trigger another request if one is already in progress.
@@ -90,7 +132,6 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         // set tweetIds to find
         
         
-        
         // Find the tweets with the tweetIDs
         let client = TWTRAPIClient()
         client.loadTweets(withIDs: tweetIDs) { (twttrs, error) -> Void in
@@ -98,8 +139,11 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
             // If there are tweets do something magical
             if ((twttrs) != nil) {
                 
+                let sortedArray = twttrs?.sorted {$0.createdAt.timeIntervalSince1970 > $1.createdAt.timeIntervalSince1970}
                 // Loop through tweets and do something
-                for i in twttrs! {
+                for i in sortedArray! {
+                    
+                    print(i.createdAt.timeIntervalSince1970)
                     // Append the Tweet to the Tweets to display in the table view.
                     self.tweets.append(i as TWTRTweet)
                 }
@@ -107,7 +151,7 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
                 print(error as Any)
             }
         }
-        
+        self.isLoadingTweets = false
     }
     
     func refreshInvoked() {
@@ -143,6 +187,11 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         
         // Configure the cell with the Tweet.
         cell.configure(with: tweet)
+        
+        //Remove loading icon
+        if let viewWithTag = self.view.viewWithTag(100) {
+            viewWithTag.removeFromSuperview()
+        }
         
         // Return the Tweet cell.
         return cell

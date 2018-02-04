@@ -18,6 +18,9 @@
 		C24C46252025669D0030B517 /* MahatmaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24C46242025669D0030B517 /* MahatmaUITests.swift */; };
 		C25DFF4120258D6D0000AD8E /* ListTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25DFF4020258D6D0000AD8E /* ListTimelineViewController.swift */; };
 		C26D11102026149F000FC9FC /* BackupSingleTweetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D110F2026149F000FC9FC /* BackupSingleTweetViewController.swift */; };
+		C26D111420265F31000FC9FC /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D111320265F31000FC9FC /* SearchViewController.swift */; };
+		C2B5D3BC20269E0700686611 /* ProgressHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B5D3BB20269E0700686611 /* ProgressHub.swift */; };
+		C2B5D3BE2026B82D00686611 /* welcomeInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B5D3BD2026B82D00686611 /* welcomeInstructions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,9 @@
 		C24C46262025669D0030B517 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C25DFF4020258D6D0000AD8E /* ListTimelineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTimelineViewController.swift; sourceTree = "<group>"; };
 		C26D110F2026149F000FC9FC /* BackupSingleTweetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupSingleTweetViewController.swift; sourceTree = "<group>"; };
+		C26D111320265F31000FC9FC /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		C2B5D3BB20269E0700686611 /* ProgressHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressHub.swift; sourceTree = "<group>"; };
+		C2B5D3BD2026B82D00686611 /* welcomeInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = welcomeInstructions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,11 +133,14 @@
 		C24C46012025669C0030B517 /* Mahatma */ = {
 			isa = PBXGroup;
 			children = (
+				C26D111320265F31000FC9FC /* SearchViewController.swift */,
 				C24C46022025669C0030B517 /* AppDelegate.swift */,
 				C24C46042025669C0030B517 /* FirstViewController.swift */,
 				C26D110F2026149F000FC9FC /* BackupSingleTweetViewController.swift */,
 				C25DFF4020258D6D0000AD8E /* ListTimelineViewController.swift */,
 				C24C46062025669C0030B517 /* SecondViewController.swift */,
+				C2B5D3BB20269E0700686611 /* ProgressHub.swift */,
+				C2B5D3BD2026B82D00686611 /* welcomeInstructions.swift */,
 				C24C46082025669C0030B517 /* Main.storyboard */,
 				C24C460B2025669C0030B517 /* Assets.xcassets */,
 				C24C460D2025669C0030B517 /* LaunchScreen.storyboard */,
@@ -356,9 +365,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C26D111420265F31000FC9FC /* SearchViewController.swift in Sources */,
 				C24C46072025669C0030B517 /* SecondViewController.swift in Sources */,
+				C2B5D3BC20269E0700686611 /* ProgressHub.swift in Sources */,
 				C24C46032025669C0030B517 /* AppDelegate.swift in Sources */,
 				C26D11102026149F000FC9FC /* BackupSingleTweetViewController.swift in Sources */,
+				C2B5D3BE2026B82D00686611 /* welcomeInstructions.swift in Sources */,
 				C25DFF4120258D6D0000AD8E /* ListTimelineViewController.swift in Sources */,
 				C24C46052025669C0030B517 /* FirstViewController.swift in Sources */,
 			);
@@ -528,6 +540,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 85AB8HMCQF;
 				INFOPLIST_FILE = Mahatma/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = JC.Mahatma;
@@ -544,6 +557,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 85AB8HMCQF;
 				INFOPLIST_FILE = Mahatma/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = JC.Mahatma;
