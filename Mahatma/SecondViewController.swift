@@ -52,7 +52,7 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         
         if(screenNames.count == 0){
             // Create and add the welcome instruction view to the screen.
-            let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatma's yet.", text2: "Add new Mahatma's in preferences tab.")
+            let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatmas yet.", text2: "Add new Mahatmas in preferences tab.")
             welcomeInstructionsVar.tag = 110;
             welcomeInstructionsVar.center = self.view.center;
             self.view.addSubview(welcomeInstructionsVar)
