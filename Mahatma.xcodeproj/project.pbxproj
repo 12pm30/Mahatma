@@ -21,6 +21,8 @@
 		C26D111420265F31000FC9FC /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D111320265F31000FC9FC /* SearchViewController.swift */; };
 		C2B5D3BC20269E0700686611 /* ProgressHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B5D3BB20269E0700686611 /* ProgressHub.swift */; };
 		C2B5D3BE2026B82D00686611 /* welcomeInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B5D3BD2026B82D00686611 /* welcomeInstructions.swift */; };
+		C2B5D3C02026E27700686611 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B5D3BF2026E27700686611 /* UIViewExtension.swift */; };
+		C2B5D3C22026E2BF00686611 /* colourConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B5D3C12026E2BF00686611 /* colourConstants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 		C26D111320265F31000FC9FC /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		C2B5D3BB20269E0700686611 /* ProgressHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressHub.swift; sourceTree = "<group>"; };
 		C2B5D3BD2026B82D00686611 /* welcomeInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = welcomeInstructions.swift; sourceTree = "<group>"; };
+		C2B5D3BF2026E27700686611 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
+		C2B5D3C12026E2BF00686611 /* colourConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = colourConstants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +140,8 @@
 				C26D111320265F31000FC9FC /* SearchViewController.swift */,
 				C24C46022025669C0030B517 /* AppDelegate.swift */,
 				C24C46042025669C0030B517 /* FirstViewController.swift */,
+				C2B5D3C12026E2BF00686611 /* colourConstants.swift */,
+				C2B5D3BF2026E27700686611 /* UIViewExtension.swift */,
 				C26D110F2026149F000FC9FC /* BackupSingleTweetViewController.swift */,
 				C25DFF4020258D6D0000AD8E /* ListTimelineViewController.swift */,
 				C24C46062025669C0030B517 /* SecondViewController.swift */,
@@ -370,7 +376,9 @@
 				C2B5D3BC20269E0700686611 /* ProgressHub.swift in Sources */,
 				C24C46032025669C0030B517 /* AppDelegate.swift in Sources */,
 				C26D11102026149F000FC9FC /* BackupSingleTweetViewController.swift in Sources */,
+				C2B5D3C22026E2BF00686611 /* colourConstants.swift in Sources */,
 				C2B5D3BE2026B82D00686611 /* welcomeInstructions.swift in Sources */,
+				C2B5D3C02026E27700686611 /* UIViewExtension.swift in Sources */,
 				C25DFF4120258D6D0000AD8E /* ListTimelineViewController.swift in Sources */,
 				C24C46052025669C0030B517 /* FirstViewController.swift in Sources */,
 			);

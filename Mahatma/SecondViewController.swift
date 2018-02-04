@@ -20,9 +20,29 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     var isLoadingTweets = false
     
     var tweetIDs = [String]()
-
+    
+    lazy var refreshControlNew: UIRefreshControl = {
+        let refreshControlNew = UIRefreshControl()
+        refreshControlNew.addTarget(self, action: #selector(refreshTweets(notification:)), for: UIControlEvents.valueChanged)
+        return refreshControlNew
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // For gradient background
+        //view.setGradientBackground(colorOne: Colors.lightestBlue, colorTwo: Colors.lightBlue)
+        
+        if(screenNames.count == 0){
+            let defaults = UserDefaults.standard
+            if let screenNamesBackup = defaults.array(forKey: defaultsKeys.keyOne) {
+                screenNames = screenNamesBackup as! [String]
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTable"), object: nil)
+                
+                // Update tweet view (send message to other view controller)
+                refreshTweetsInternal()
+            }
+        }
         
         // Create and add the view to the screen.
         let progressHUD = ProgressHUD(text: "Retrieving Tweets")
@@ -30,11 +50,15 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         progressHUD.center = self.view.center;
         self.view.addSubview(progressHUD)
         
-        // Create and add the view to the screen.
-        let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatma's yet.", text2: "Add new Mahatma's in preferences tab.")
-        welcomeInstructionsVar.tag = 110;
-        welcomeInstructionsVar.center = self.view.center;
-        self.view.addSubview(welcomeInstructionsVar)
+        if(screenNames.count == 0){
+            // Create and add the welcome instruction view to the screen.
+            let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatma's yet.", text2: "Add new Mahatma's in preferences tab.")
+            welcomeInstructionsVar.tag = 110;
+            welcomeInstructionsVar.center = self.view.center;
+            self.view.addSubview(welcomeInstructionsVar)
+        }
+        
+        self.tableView.addSubview(self.refreshControlNew)
         
         NotificationCenter.default.addObserver(self, selector:#selector(refreshTweets(notification:)),name:NSNotification.Name(rawValue: "refreshTweets"), object: nil)
     }
@@ -54,8 +78,12 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     }
     
     @objc func refreshTweets(notification: NSNotification) {
-        print("RefreshTweets!")
+        print("RefreshTweets from notification!")
         
+        refreshTweetsInternal()
+    }
+    
+    func refreshTweetsInternal() {
         //Remove welcome message
         if let viewWithTag = self.view.viewWithTag(110) {
             viewWithTag.removeFromSuperview()
@@ -65,12 +93,13 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         var counter = 0
         tweetIDs.removeAll()
         self.tweets.removeAll()
+        var tweetCount = min(30,150/screenNames.count)
         for i in 0...screenNames.count-1 {
             if let userID = TWTRTwitter.sharedInstance().sessionStore.session()?.userID {
                 let client = TWTRAPIClient(userID: userID)
                 // make requests with client
                 let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-                let params = ["screen_name": screenNames[i], "count": "20"]
+                let params = ["screen_name": screenNames[i], "count": "\(tweetCount)"]
                 var clientError : NSError?
                 
                 let request = client.urlRequest(withMethod: "GET", urlString: statusesShowEndpoint, parameters: params, error: &clientError)
@@ -116,6 +145,7 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
                 }
             }
         }
+        refreshControlNew.endRefreshing()
     }
     
     override func viewWillAppear(_ animated: Bool) {
