@@ -19,6 +19,8 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     
     var isLoadingTweets = false
     
+    let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatmas yet.", text2: "Add new Mahatmas in preferences tab.")
+    
     var tweetIDs = [String]()
     
     lazy var refreshControlNew: UIRefreshControl = {
@@ -51,8 +53,7 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
         self.view.addSubview(progressHUD)
         
         if(screenNames.count == 0){
-            // Create and add the welcome instruction view to the screen.
-            let welcomeInstructionsVar = welcomeInstructions(text: "Oh no! You have no Mahatmas yet.", text2: "Add new Mahatmas in preferences tab.")
+            // Add the welcome instruction view to the screen.
             welcomeInstructionsVar.tag = 110;
             welcomeInstructionsVar.center = self.view.center;
             self.view.addSubview(welcomeInstructionsVar)
@@ -84,66 +85,71 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     }
     
     func refreshTweetsInternal() {
-        //Remove welcome message
-        if let viewWithTag = self.view.viewWithTag(110) {
-            viewWithTag.removeFromSuperview()
-        }
-        
         // Get the current userID. This value should be managed by the developer but can be retrieved from the TWTRSessionStore.
         var counter = 0
         tweetIDs.removeAll()
         self.tweets.removeAll()
-        var tweetCount = min(30,150/screenNames.count)
-        for i in 0...screenNames.count-1 {
-            if let userID = TWTRTwitter.sharedInstance().sessionStore.session()?.userID {
-                let client = TWTRAPIClient(userID: userID)
-                // make requests with client
-                let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-                let params = ["screen_name": screenNames[i], "count": "\(tweetCount)"]
-                var clientError : NSError?
-                
-                let request = client.urlRequest(withMethod: "GET", urlString: statusesShowEndpoint, parameters: params, error: &clientError)
-                
-                client.sendTwitterRequest(request) { (response, data, connectionError) -> Void in
-                    if connectionError != nil {
-                        print("Error: \(connectionError)")
-                    }
+        
+        // Get new tweet stream if atleast one user exists in Mahatmas list.
+        if (screenNames.count != 0) {
+            //Remove welcome message as there is now atleast one user.
+            welcomeInstructionsVar.hide()
+            
+            var tweetCount = min(30,150/screenNames.count)
+            for i in 0...screenNames.count-1 {
+                if let userID = TWTRTwitter.sharedInstance().sessionStore.session()?.userID {
+                    let client = TWTRAPIClient(userID: userID)
+                    // make requests with client
+                    let statusesShowEndpoint = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+                    let params = ["screen_name": screenNames[i], "count": "\(tweetCount)"]
+                    var clientError : NSError?
                     
-                    do {
-                        if (data != nil) {
-                            //Send message to update table with valid user.
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTableValid"), object: nil)
-                            
-                            let json = try JSONSerialization.jsonObject(with: data!, options: []) as? [[String:Any]]
-                            //print("json: \(json)")
-                            for item in json! {
-                                self.tweetIDs.append(String(format: "%@", item["id"] as! CVarArg))
-                            }
-                            counter = counter + 1
-                            if (counter > screenNames.count-1) {
-                                self.tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-                                
-                                // Create a single prototype cell for height calculations.
-                                self.prototypeCell = TWTRTweetTableViewCell(style: .default, reuseIdentifier: self.tweetTableCellReuseIdentifier)
-                                
-                                // Register the identifier for TWTRTweetTableViewCell.
-                                self.tableView.register(TWTRTweetTableViewCell.self, forCellReuseIdentifier: self.tweetTableCellReuseIdentifier)
-                                
-                                // Setup table data
-                                self.loadTweets()
-                                
-                            }
-                        }
-                        else {
-                            screenNames.popLast()
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTable"), object: nil)
+                    let request = client.urlRequest(withMethod: "GET", urlString: statusesShowEndpoint, parameters: params, error: &clientError)
+                    
+                    client.sendTwitterRequest(request) { (response, data, connectionError) -> Void in
+                        if connectionError != nil {
+                            print("Error: \(connectionError)")
                         }
                         
-                    } catch let jsonError as NSError {
-                        print("json error: \(jsonError.localizedDescription)")
+                        do {
+                            if (data != nil) {
+                                //Send message to update table with valid user.
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTableValid"), object: nil)
+                                
+                                let json = try JSONSerialization.jsonObject(with: data!, options: []) as? [[String:Any]]
+                                //print("json: \(json)")
+                                for item in json! {
+                                    self.tweetIDs.append(String(format: "%@", item["id"] as! CVarArg))
+                                }
+                                counter = counter + 1
+                                if (counter > screenNames.count-1) {
+                                    self.tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+                                    
+                                    // Create a single prototype cell for height calculations.
+                                    self.prototypeCell = TWTRTweetTableViewCell(style: .default, reuseIdentifier: self.tweetTableCellReuseIdentifier)
+                                    
+                                    // Register the identifier for TWTRTweetTableViewCell.
+                                    self.tableView.register(TWTRTweetTableViewCell.self, forCellReuseIdentifier: self.tweetTableCellReuseIdentifier)
+                                    
+                                    // Setup table data
+                                    self.loadTweets()
+                                    
+                                }
+                            }
+                            else {
+                                screenNames.popLast()
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "reloadTable"), object: nil)
+                            }
+                            
+                        } catch let jsonError as NSError {
+                            print("json error: \(jsonError.localizedDescription)")
+                        }
                     }
                 }
             }
+        } else {
+            // Add the welcome instruction view to the screen (if no users exist).
+            welcomeInstructionsVar.show()
         }
         refreshControlNew.endRefreshing()
     }
