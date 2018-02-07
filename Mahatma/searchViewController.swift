@@ -65,9 +65,23 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     /* on search button press */
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        screenNames.append(searchBar.text!)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshTweets"), object: nil)
-        searchBar.text = ""
+        /* Max Mahatmas of maxTweets (1 tweet per user) */
+        if (screenNames.count < maxTweets){
+            if (screenNames.contains(searchBar.text!)){
+                let alert = UIAlertController(title: "Alert", message: "Mahatma already exists!", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                screenNames.append(searchBar.text!)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshTweets"), object: nil)
+                searchBar.text = ""
+            }
+        } else {
+            // Can't have more than 150 Mahatmas, show error message.
+            let alert = UIAlertController(title: "Alert", message: "Mahatma limit reached (150 users). Please delete a Mahatma before adding new Mahatmas.", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 
     

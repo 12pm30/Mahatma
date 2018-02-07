@@ -3,6 +3,7 @@ import TwitterKit
 import Foundation
 
 var screenNames = [String]()
+var maxTweets = 150;
 
 class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
     
@@ -95,7 +96,7 @@ class SecondViewController: UITableViewController , TWTRTweetViewDelegate {
             //Remove welcome message as there is now atleast one user.
             welcomeInstructionsVar.hide()
             
-            var tweetCount = min(30,150/screenNames.count)
+            var tweetCount = min(30,maxTweets/screenNames.count)
             for i in 0...screenNames.count-1 {
                 if let userID = TWTRTwitter.sharedInstance().sessionStore.session()?.userID {
                     let client = TWTRAPIClient(userID: userID)
